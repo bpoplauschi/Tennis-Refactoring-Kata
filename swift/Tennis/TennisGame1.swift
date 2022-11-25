@@ -62,6 +62,35 @@ final class AdvantageOrWinRule: Rule {
     }
 }
 
+final class ScoreRule: Rule {
+    private let player1: Player
+    private let player2: Player
+    
+    init(player1: Player, player2: Player) {
+        self.player1 = player1
+        self.player2 = player2
+    }
+    
+    var isSatisfied: Bool { true }
+    
+    var score: String {
+        var tempScore = 0
+        var result = ""
+        for i in 1..<3 {
+            if i==1 { tempScore = player1.score }
+            else { result = "\(result)-"; tempScore = player2.score }
+            switch tempScore {
+            case 0: result = "\(result)Love"
+            case 1: result = "\(result)Fifteen"
+            case 2: result = "\(result)Thirty"
+            case 3: result = "\(result)Forty"
+            default: break
+            }
+        }
+        return result
+    }
+}
+
 class TennisGame1: TennisGame {
     private let player1: Player
     private let player2: Player
@@ -78,34 +107,18 @@ class TennisGame1: TennisGame {
             player2.wonPoint()
         }
     }
-    
-    private func scoreDescription() -> String {
-        var tempScore = 0
-        var result = ""
-        for i in 1..<3 {
-            if i==1 { tempScore = player1.score }
-            else { result = "\(result)-"; tempScore = player2.score }
-            switch tempScore {
-            case 0: result = "\(result)Love"
-            case 1: result = "\(result)Fifteen"
-            case 2: result = "\(result)Thirty"
-            case 3: result = "\(result)Forty"
-            default: break
-            }
-        }
-        return result
-    }
-    
+        
     var score: String? {
         let tieRule = TieRule(player1: player1, player2: player2)
         let advantageOrWinRule = AdvantageOrWinRule(player1: player1, player2: player2)
+        let scoreRule = ScoreRule(player1: player1, player2: player2)
         var score = ""
         if tieRule.isSatisfied {
             score = tieRule.score
         } else if advantageOrWinRule.isSatisfied {
             score = advantageOrWinRule.score
-        } else {
-            score = scoreDescription()
+        } else if scoreRule.isSatisfied {
+            score = scoreRule.score
         }
         return score
     }
