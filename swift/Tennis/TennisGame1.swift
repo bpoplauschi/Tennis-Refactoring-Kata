@@ -27,26 +27,24 @@ class TennisGame1: TennisGame {
         }
     }
     
+    private func isEqualScore() -> Bool { player1.score == player2.score }
+    
+    private func scoreDescription(for player: Player) -> String {
+        let result: String
+        switch player.score {
+        case 0: result = "Love-All"
+        case 1: result = "Fifteen-All"
+        case 2: result = "Thirty-All"
+        default: result = "Deuce"
+        }
+        return result
+    }
+    
     var score: String? {
         var score = ""
         var tempScore = 0
-        if player1.score == player2.score
-        {
-            switch player1.score
-            {
-            case 0:
-                score = "Love-All"
-
-            case 1:
-                score = "Fifteen-All"
-
-            case 2:
-                score = "Thirty-All"
-
-            default:
-                score = "Deuce"
-                
-            }
+        if isEqualScore() {
+            score = scoreDescription(for: player1)
         }
         else if player1.score>=4 || player2.score>=4
         {
