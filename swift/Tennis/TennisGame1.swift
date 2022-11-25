@@ -80,6 +80,4 @@ class TennisGame1: TennisGame {
         }
         return score
     }
-    
-    
 }
