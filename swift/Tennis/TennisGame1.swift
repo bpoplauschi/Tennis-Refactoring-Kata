@@ -19,10 +19,18 @@ protocol Rule {
 
 extension Rule {
     var minScoreToWin: Int { 4 }
-    var scoreDifferenceToWin: Int { 2 }
+    private var scoreDifferenceToWin: Int { 2 }
     
     func atLeastOneWinnableScore(score1: Int, score2: Int) -> Bool {
         score1 >= minScoreToWin || score2 >= minScoreToWin
+    }
+    
+    func isScoreDifferenceEnoughToWin(score1: Int, score2: Int) -> Bool {
+        scoreDifference(score1: score1, score2: score2) >= scoreDifferenceToWin
+    }
+    
+    func isScoreDifferenceNotEnoughToWin(score1: Int, score2: Int) -> Bool {
+        scoreDifference(score1: score1, score2: score2) >= scoreDifferenceToWin
     }
 }
 
@@ -48,7 +56,7 @@ final class TieRule: Rule {
 final class WinRule: Rule {
     func isSatisfied(score1: Int, score2: Int) -> Bool {
         guard atLeastOneWinnableScore(score1: score1, score2: score2) else { return false }
-        return scoreDifference(score1: score1, score2: score2) >= scoreDifferenceToWin
+        return isScoreDifferenceEnoughToWin(score1: score1, score2: score2)
     }
     
     func scoreDescription(score1: Int, score2: Int) -> String {
@@ -63,7 +71,7 @@ final class WinRule: Rule {
 final class AdvantageRule: Rule {
     func isSatisfied(score1: Int, score2: Int) -> Bool {
         guard atLeastOneWinnableScore(score1: score1, score2: score2) else { return false }
-        return scoreDifference(score1: score1, score2: score2) < scoreDifferenceToWin
+        return isScoreDifferenceNotEnoughToWin(score1: score1, score2: score2)
     }
     
     func scoreDescription(score1: Int, score2: Int) -> String {
