@@ -40,6 +40,28 @@ final class TieRule: Rule {
     }
 }
 
+final class AdvantageOrWinRule: Rule {
+    private let player1: Player
+    private let player2: Player
+    
+    init(player1: Player, player2: Player) {
+        self.player1 = player1
+        self.player2 = player2
+    }
+    
+    var isSatisfied: Bool { player1.score >= 4 || player2.score >= 4 }
+    
+    var score: String {
+        let result: String
+        let minusResult = player1.score - player2.score
+        if minusResult==1 { result = "Advantage player1" }
+        else if minusResult  == -1 { result = "Advantage player2" }
+        else if minusResult>=2 { result = "Win for player1" }
+        else { result = "Win for player2" }
+        return result
+    }
+}
+
 class TennisGame1: TennisGame {
     private let player1: Player
     private let player2: Player
@@ -55,31 +77,6 @@ class TennisGame1: TennisGame {
         } else if playerName == player2.name {
             player2.wonPoint()
         }
-    }
-    
-    private func scoreIsEqual() -> Bool { player1.score == player2.score }
-    
-    private func singleScoreDescription() -> String {
-        let result: String
-        switch player1.score {
-        case 0: result = "Love-All"
-        case 1: result = "Fifteen-All"
-        case 2: result = "Thirty-All"
-        default: result = "Deuce"
-        }
-        return result
-    }
-    
-    private func scoreIsAdvantageOrWin() -> Bool { player1.score >= 4 || player2.score >= 4 }
-    
-    private func scoreDescriptionAdvantageOrWin() -> String {
-        let result: String
-        let minusResult = player1.score - player2.score
-        if minusResult==1 { result = "Advantage player1" }
-        else if minusResult  == -1 { result = "Advantage player2" }
-        else if minusResult>=2 { result = "Win for player1" }
-        else { result = "Win for player2" }
-        return result
     }
     
     private func scoreDescription() -> String {
@@ -101,11 +98,12 @@ class TennisGame1: TennisGame {
     
     var score: String? {
         let tieRule = TieRule(player1: player1, player2: player2)
+        let advantageOrWinRule = AdvantageOrWinRule(player1: player1, player2: player2)
         var score = ""
         if tieRule.isSatisfied {
             score = tieRule.score
-        } else if scoreIsAdvantageOrWin() {
-            score = scoreDescriptionAdvantageOrWin()
+        } else if advantageOrWinRule.isSatisfied {
+            score = advantageOrWinRule.score
         } else {
             score = scoreDescription()
         }
