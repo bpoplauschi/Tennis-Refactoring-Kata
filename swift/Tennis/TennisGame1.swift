@@ -17,6 +17,11 @@ protocol Rule {
     func scoreDescription(score1: Int, score2: Int) -> String
 }
 
+extension Rule {
+    var minScoreToWin: Int { 4 }
+    var scoreDifferenceToWin: Int { 2 }
+}
+
 func scoreDifference(score1: Int, score2: Int) -> Int {
     abs(score1 - score2)
 }
@@ -37,7 +42,7 @@ final class TieRule: Rule {
 }
 
 final class WinRule: Rule {
-    func isSatisfied(score1: Int, score2: Int) -> Bool { (score1 >= 4 || score2 >= 4) && scoreDifference(score1: score1, score2: score2) >= 2 }
+    func isSatisfied(score1: Int, score2: Int) -> Bool { (score1 >= minScoreToWin || score2 >= minScoreToWin) && scoreDifference(score1: score1, score2: score2) >= scoreDifferenceToWin }
     
     func scoreDescription(score1: Int, score2: Int) -> String {
         let result: String
@@ -49,7 +54,7 @@ final class WinRule: Rule {
 }
 
 final class AdvantageRule: Rule {
-    func isSatisfied(score1: Int, score2: Int) -> Bool { (score1 >= 4 || score2 >= 4) && scoreDifference(score1: score1, score2: score2) < 2 }
+    func isSatisfied(score1: Int, score2: Int) -> Bool { (score1 >= minScoreToWin || score2 >= minScoreToWin) && scoreDifference(score1: score1, score2: score2) < scoreDifferenceToWin }
     
     func scoreDescription(score1: Int, score2: Int) -> String {
         let result: String
