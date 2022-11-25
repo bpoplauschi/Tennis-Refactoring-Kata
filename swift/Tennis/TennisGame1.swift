@@ -27,7 +27,7 @@ class TennisGame1: TennisGame {
         }
     }
     
-    private func isEqualScore() -> Bool { player1.score == player2.score }
+    private func scoreIsEqual() -> Bool { player1.score == player2.score }
     
     private func scoreDescription(for player: Player) -> String {
         let result: String
@@ -40,22 +40,26 @@ class TennisGame1: TennisGame {
         return result
     }
     
+    private func scoreIsAdvantageOrWin() -> Bool { player1.score >= 4 || player2.score >= 4 }
+    
+    private func scoreDescription(player1: Player, player2: Player) -> String {
+        let result: String
+        let minusResult = player1.score - player2.score
+        if minusResult==1 { result = "Advantage player1" }
+        else if minusResult  == -1 { result = "Advantage player2" }
+        else if minusResult>=2 { result = "Win for player1" }
+        else { result = "Win for player2" }
+        return result
+    }
+    
     var score: String? {
         var score = ""
         var tempScore = 0
-        if isEqualScore() {
+        if scoreIsEqual() {
             score = scoreDescription(for: player1)
-        }
-        else if player1.score>=4 || player2.score>=4
-        {
-            let minusResult = player1.score-player2.score
-            if minusResult==1 { score = "Advantage player1" }
-            else if minusResult  == -1 { score = "Advantage player2" }
-            else if minusResult>=2 { score = "Win for player1" }
-            else { score = "Win for player2" }
-        }
-        else
-        {
+        } else if scoreIsAdvantageOrWin() {
+            score = scoreDescription(player1: player1, player2: player2)
+        } else {
             for i in 1..<3
             {
                 if i==1 { tempScore = player1.score }
