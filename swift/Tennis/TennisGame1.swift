@@ -42,7 +42,7 @@ final class TieRule: Rule {
     }
 }
 
-final class AdvantageOrWinRule: Rule {
+final class WinRule: Rule {
     private let player1: Player
     private let player2: Player
     
@@ -51,15 +51,33 @@ final class AdvantageOrWinRule: Rule {
         self.player2 = player2
     }
     
-    var isSatisfied: Bool { player1.score >= 4 || player2.score >= 4 }
+    var isSatisfied: Bool { (player1.score >= 4 || player2.score >= 4) && abs(player1.score - player2.score) >= 2 }
+    
+    var score: String {
+        let result: String
+        let minusResult = player1.score - player2.score
+        if minusResult>=2 { result = "Win for player1" }
+        else { result = "Win for player2" }
+        return result
+    }
+}
+
+final class AdvantageRule: Rule {
+    private let player1: Player
+    private let player2: Player
+    
+    init(player1: Player, player2: Player) {
+        self.player1 = player1
+        self.player2 = player2
+    }
+    
+    var isSatisfied: Bool { (player1.score >= 4 || player2.score >= 4) && abs(player1.score - player2.score) < 2 }
     
     var score: String {
         let result: String
         let minusResult = player1.score - player2.score
         if minusResult==1 { result = "Advantage player1" }
-        else if minusResult  == -1 { result = "Advantage player2" }
-        else if minusResult>=2 { result = "Win for player1" }
-        else { result = "Win for player2" }
+        else { result = "Advantage player2" }
         return result
     }
 }
@@ -97,7 +115,7 @@ class TennisGame1: TennisGame {
     private let player1: Player
     private let player2: Player
     private let rules: [Rule]
-    static var ruleTypes: [Rule.Type] = [TieRule.self, AdvantageOrWinRule.self, ScoreRule.self]
+    static var ruleTypes: [Rule.Type] = [TieRule.self, WinRule.self, AdvantageRule.self, ScoreRule.self]
     
     required init(player1: String, player2: String) {
         let playerOne = Player(name: player1)
