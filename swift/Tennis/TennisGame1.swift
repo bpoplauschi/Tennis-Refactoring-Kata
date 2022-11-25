@@ -13,15 +13,22 @@ final class Player {
 }
 
 protocol Rule {
+    var player1: Player { get }
+    var player2: Player { get }
     var isSatisfied: Bool { get }
     var score: String { get }
+    var scoreDifference: Int { get }
     
     init(player1: Player, player2: Player)
 }
 
+extension Rule {
+    var scoreDifference: Int { abs(player1.score - player2.score) }
+}
+
 final class TieRule: Rule {
-    private let player1: Player
-    private let player2: Player
+    let player1: Player
+    let player2: Player
     
     init(player1: Player, player2: Player) {
         self.player1 = player1
@@ -43,15 +50,15 @@ final class TieRule: Rule {
 }
 
 final class WinRule: Rule {
-    private let player1: Player
-    private let player2: Player
+    let player1: Player
+    let player2: Player
     
     init(player1: Player, player2: Player) {
         self.player1 = player1
         self.player2 = player2
     }
     
-    var isSatisfied: Bool { (player1.score >= 4 || player2.score >= 4) && abs(player1.score - player2.score) >= 2 }
+    var isSatisfied: Bool { (player1.score >= 4 || player2.score >= 4) && scoreDifference >= 2 }
     
     var score: String {
         let result: String
@@ -63,15 +70,15 @@ final class WinRule: Rule {
 }
 
 final class AdvantageRule: Rule {
-    private let player1: Player
-    private let player2: Player
+    let player1: Player
+    let player2: Player
     
     init(player1: Player, player2: Player) {
         self.player1 = player1
         self.player2 = player2
     }
     
-    var isSatisfied: Bool { (player1.score >= 4 || player2.score >= 4) && abs(player1.score - player2.score) < 2 }
+    var isSatisfied: Bool { (player1.score >= 4 || player2.score >= 4) && scoreDifference < 2 }
     
     var score: String {
         let result: String
@@ -83,8 +90,8 @@ final class AdvantageRule: Rule {
 }
 
 final class ScoreRule: Rule {
-    private let player1: Player
-    private let player2: Player
+    let player1: Player
+    let player2: Player
     
     init(player1: Player, player2: Player) {
         self.player1 = player1
