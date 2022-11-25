@@ -109,17 +109,14 @@ class TennisGame1: TennisGame {
     }
         
     var score: String? {
-        let tieRule = TieRule(player1: player1, player2: player2)
-        let advantageOrWinRule = AdvantageOrWinRule(player1: player1, player2: player2)
-        let scoreRule = ScoreRule(player1: player1, player2: player2)
-        var score = ""
-        if tieRule.isSatisfied {
-            score = tieRule.score
-        } else if advantageOrWinRule.isSatisfied {
-            score = advantageOrWinRule.score
-        } else if scoreRule.isSatisfied {
-            score = scoreRule.score
+        let rules: [Rule] = [
+            TieRule(player1: player1, player2: player2),
+            AdvantageOrWinRule(player1: player1, player2: player2),
+            ScoreRule(player1: player1, player2: player2)
+        ]
+        if let rule = rules.first(where: { $0.isSatisfied }) {
+            return rule.score
         }
-        return score
+        return ""
     }
 }
