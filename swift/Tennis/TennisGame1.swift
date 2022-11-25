@@ -14,7 +14,7 @@ final class Player {
 
 protocol Rule {
     func isSatisfied(score1: Int, score2: Int) -> Bool
-    func scoreDescription(score1: Int, score2: Int) -> String
+    func scoreDescription(player1: Player, player2: Player) -> String
 }
 
 extension Rule {
@@ -30,7 +30,7 @@ extension Rule {
     }
     
     func isScoreDifferenceNotEnoughToWin(score1: Int, score2: Int) -> Bool {
-        scoreDifference(score1: score1, score2: score2) >= scoreDifferenceToWin
+        !isScoreDifferenceEnoughToWin(score1: score1, score2: score2)
     }
 }
 
@@ -41,9 +41,9 @@ func scoreDifference(score1: Int, score2: Int) -> Int {
 final class TieRule: Rule {
     func isSatisfied(score1: Int, score2: Int) -> Bool { score1 == score2 }
     
-    func scoreDescription(score1: Int, score2: Int) -> String {
+    func scoreDescription(player1: Player, player2: Player) -> String {
         let result: String
-        switch score1 {
+        switch player1.score {
         case 0: result = "Love-All"
         case 1: result = "Fifteen-All"
         case 2: result = "Thirty-All"
@@ -53,18 +53,18 @@ final class TieRule: Rule {
     }
 }
 
+func playerAhead(_ player1: Player, _ player2: Player) -> String {
+    player1.score > player2.score ? player1.name : player2.name
+}
+
 final class WinRule: Rule {
     func isSatisfied(score1: Int, score2: Int) -> Bool {
         guard atLeastOneWinnableScore(score1: score1, score2: score2) else { return false }
         return isScoreDifferenceEnoughToWin(score1: score1, score2: score2)
     }
     
-    func scoreDescription(score1: Int, score2: Int) -> String {
-        let result: String
-        let minusResult = score1 - score2
-        if minusResult>=2 { result = "Win for player1" }
-        else { result = "Win for player2" }
-        return result
+    func scoreDescription(player1: Player, player2: Player) -> String {
+        return "Win for \(playerAhead(player1, player2))"
     }
 }
 
@@ -74,24 +74,20 @@ final class AdvantageRule: Rule {
         return isScoreDifferenceNotEnoughToWin(score1: score1, score2: score2)
     }
     
-    func scoreDescription(score1: Int, score2: Int) -> String {
-        let result: String
-        let minusResult = score1 - score2
-        if minusResult==1 { result = "Advantage player1" }
-        else { result = "Advantage player2" }
-        return result
+    func scoreDescription(player1: Player, player2: Player) -> String {
+        return "Advantage \(playerAhead(player1, player2))"
     }
 }
 
 final class ScoreRule: Rule {
     func isSatisfied(score1: Int, score2: Int) -> Bool { true }
     
-    func scoreDescription(score1: Int, score2: Int) -> String {
+    func scoreDescription(player1: Player, player2: Player) -> String {
         var tempScore = 0
         var result = ""
         for i in 1..<3 {
-            if i==1 { tempScore = score1 }
-            else { result = "\(result)-"; tempScore = score2 }
+            if i==1 { tempScore = player1.score }
+            else { result = "\(result)-"; tempScore = player2.score }
             switch tempScore {
             case 0: result = "\(result)Love"
             case 1: result = "\(result)Fifteen"
@@ -123,9 +119,7 @@ class TennisGame1: TennisGame {
     }
         
     var score: String? {
-        if let rule = rules.first(where: { $0.isSatisfied(score1: player1.score, score2: player2.score) }) {
-            return rule.scoreDescription(score1: player1.score, score2: player2.score)
-        }
-        return ""
+        guard let rule = rules.first(where: { $0.isSatisfied(score1: player1.score, score2: player2.score) }) else { return "" }
+        return rule.scoreDescription(player1: player1, player2: player2)
     }
 }
