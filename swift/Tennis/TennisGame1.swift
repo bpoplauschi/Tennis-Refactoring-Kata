@@ -1,18 +1,46 @@
 import Foundation
 
-class TennisGame1: TennisGame {
-    final class Player {
-        let name: String
-        var score: Int
-        
-        init(name: String, score: Int = 0) {
-            self.name = name
-            self.score = score
-        }
-        
-        func wonPoint() { score += 1 }
+final class Player {
+    let name: String
+    var score: Int
+    
+    init(name: String, score: Int = 0) {
+        self.name = name
+        self.score = score
     }
     
+    func wonPoint() { score += 1 }
+}
+
+protocol Rule {
+    var isSatisfied: Bool { get }
+    var score: String { get }
+}
+
+final class TieRule: Rule {
+    private let player1: Player
+    private let player2: Player
+    
+    init(player1: Player, player2: Player) {
+        self.player1 = player1
+        self.player2 = player2
+    }
+    
+    var isSatisfied: Bool { player1.score == player2.score }
+    
+    var score: String {
+        let result: String
+        switch player1.score {
+        case 0: result = "Love-All"
+        case 1: result = "Fifteen-All"
+        case 2: result = "Thirty-All"
+        default: result = "Deuce"
+        }
+        return result
+    }
+}
+
+class TennisGame1: TennisGame {
     private let player1: Player
     private let player2: Player
     
@@ -72,9 +100,10 @@ class TennisGame1: TennisGame {
     }
     
     var score: String? {
+        let tieRule = TieRule(player1: player1, player2: player2)
         var score = ""
-        if scoreIsEqual() {
-            score = singleScoreDescription()
+        if tieRule.isSatisfied {
+            score = tieRule.score
         } else if scoreIsAdvantageOrWin() {
             score = scoreDescriptionAdvantageOrWin()
         } else {
