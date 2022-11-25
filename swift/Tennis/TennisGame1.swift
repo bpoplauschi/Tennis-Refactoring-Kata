@@ -42,7 +42,7 @@ class TennisGame1: TennisGame {
     
     private func scoreIsAdvantageOrWin() -> Bool { player1.score >= 4 || player2.score >= 4 }
     
-    private func scoreDescription(player1: Player, player2: Player) -> String {
+    private func scoreDescriptionAdvantageOrWin(player1: Player, player2: Player) -> String {
         let result: String
         let minusResult = player1.score - player2.score
         if minusResult==1 { result = "Advantage player1" }
@@ -52,37 +52,31 @@ class TennisGame1: TennisGame {
         return result
     }
     
+    private func scoreDescription(player1: Player, player2: Player) -> String {
+        var tempScore = 0
+        var result = ""
+        for i in 1..<3 {
+            if i==1 { tempScore = player1.score }
+            else { result = "\(result)-"; tempScore = player2.score }
+            switch tempScore {
+            case 0: result = "\(result)Love"
+            case 1: result = "\(result)Fifteen"
+            case 2: result = "\(result)Thirty"
+            case 3: result = "\(result)Forty"
+            default: break
+            }
+        }
+        return result
+    }
+    
     var score: String? {
         var score = ""
-        var tempScore = 0
         if scoreIsEqual() {
             score = scoreDescription(for: player1)
         } else if scoreIsAdvantageOrWin() {
-            score = scoreDescription(player1: player1, player2: player2)
+            score = scoreDescriptionAdvantageOrWin(player1: player1, player2: player2)
         } else {
-            for i in 1..<3
-            {
-                if i==1 { tempScore = player1.score }
-                else { score = "\(score)-"; tempScore = player2.score }
-                switch tempScore
-                {
-                case 0:
-                    score = "\(score)Love"
-
-                case 1:
-                    score = "\(score)Fifteen"
-
-                case 2:
-                    score = "\(score)Thirty"
-
-                case 3:
-                    score = "\(score)Forty"
-
-                default:
-                    break
-
-                }
-            }
+            score = scoreDescription(player1: player1, player2: player2)
         }
         return score
     }
