@@ -1,32 +1,38 @@
 import Foundation
 
 class TennisGame1: TennisGame {
-    private let player1: String
-    private let player2: String
-    private var score1: Int
-    private var score2: Int
+    final class Player {
+        let name: String
+        var score: Int
+        
+        init(name: String, score: Int = 0) {
+            self.name = name
+            self.score = score
+        }
+    }
+    
+    private let player1: Player
+    private let player2: Player
     
     required init(player1: String, player2: String) {
-        self.player1 = player1
-        self.player2 = player2
-        self.score1 = 0
-        self.score2 = 0
+        self.player1 = Player(name: player1)
+        self.player2 = Player(name: player2)
     }
 
     func wonPoint(_ playerName: String) {
-        if playerName == "player1" {
-            score1 += 1
+        if playerName == player1.name {
+            player1.score += 1
         } else {
-            score2 += 1
+            player2.score += 1
         }
     }
     
     var score: String? {
         var score = ""
         var tempScore = 0
-        if score1 == score2
+        if player1.score == player2.score
         {
-            switch score1
+            switch player1.score
             {
             case 0:
                 score = "Love-All"
@@ -42,9 +48,9 @@ class TennisGame1: TennisGame {
                 
             }
         }
-        else if score1>=4 || score2>=4
+        else if player1.score>=4 || player2.score>=4
         {
-            let minusResult = score1-score2
+            let minusResult = player1.score-player2.score
             if minusResult==1 { score = "Advantage player1" }
             else if minusResult  == -1 { score = "Advantage player2" }
             else if minusResult>=2 { score = "Win for player1" }
@@ -54,8 +60,8 @@ class TennisGame1: TennisGame {
         {
             for i in 1..<3
             {
-                if i==1 { tempScore = score1 }
-                else { score = "\(score)-"; tempScore = score2 }
+                if i==1 { tempScore = player1.score }
+                else { score = "\(score)-"; tempScore = player2.score }
                 switch tempScore
                 {
                 case 0:
