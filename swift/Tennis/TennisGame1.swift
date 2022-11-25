@@ -9,6 +9,8 @@ class TennisGame1: TennisGame {
             self.name = name
             self.score = score
         }
+        
+        func wonPoint() { score += 1 }
     }
     
     private let player1: Player
@@ -21,9 +23,9 @@ class TennisGame1: TennisGame {
 
     func wonPoint(_ playerName: String) {
         if playerName == player1.name {
-            player1.score += 1
-        } else {
-            player2.score += 1
+            player1.wonPoint()
+        } else if playerName == player2.name {
+            player2.wonPoint()
         }
     }
     
