@@ -15,6 +15,8 @@ final class Player {
 protocol Rule {
     var isSatisfied: Bool { get }
     var score: String { get }
+    
+    init(player1: Player, player2: Player)
 }
 
 final class TieRule: Rule {
@@ -94,10 +96,15 @@ final class ScoreRule: Rule {
 class TennisGame1: TennisGame {
     private let player1: Player
     private let player2: Player
+    private let rules: [Rule]
+    static var ruleTypes: [Rule.Type] = [TieRule.self, AdvantageOrWinRule.self, ScoreRule.self]
     
     required init(player1: String, player2: String) {
-        self.player1 = Player(name: player1)
-        self.player2 = Player(name: player2)
+        let playerOne = Player(name: player1)
+        let playerTwo = Player(name: player2)
+        self.rules = TennisGame1.ruleTypes.map { $0.init(player1: playerOne, player2: playerTwo) }
+        self.player1 = playerOne
+        self.player2 = playerTwo
     }
 
     func wonPoint(_ playerName: String) {
@@ -109,11 +116,6 @@ class TennisGame1: TennisGame {
     }
         
     var score: String? {
-        let rules: [Rule] = [
-            TieRule(player1: player1, player2: player2),
-            AdvantageOrWinRule(player1: player1, player2: player2),
-            ScoreRule(player1: player1, player2: player2)
-        ]
         if let rule = rules.first(where: { $0.isSatisfied }) {
             return rule.score
         }
