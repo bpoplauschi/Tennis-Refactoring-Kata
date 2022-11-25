@@ -20,6 +20,8 @@ protocol Rule {
     var scoreDifference: Int { get }
     
     init(player1: Player, player2: Player)
+    
+    func isSatisfied(score1: Int, score2: Int) -> Bool
 }
 
 extension Rule {
@@ -47,6 +49,8 @@ final class TieRule: Rule {
         }
         return result
     }
+    
+    func isSatisfied(score1: Int, score2: Int) -> Bool { score1 == score2 }
 }
 
 final class WinRule: Rule {
@@ -67,6 +71,8 @@ final class WinRule: Rule {
         else { result = "Win for player2" }
         return result
     }
+    
+    func isSatisfied(score1: Int, score2: Int) -> Bool { (score1 >= 4 || score2 >= 4) && scoreDifference >= 2 }
 }
 
 final class AdvantageRule: Rule {
@@ -87,6 +93,8 @@ final class AdvantageRule: Rule {
         else { result = "Advantage player2" }
         return result
     }
+    
+    func isSatisfied(score1: Int, score2: Int) -> Bool { (score1 >= 4 || score2 >= 4) && scoreDifference < 2 }
 }
 
 final class ScoreRule: Rule {
@@ -116,6 +124,8 @@ final class ScoreRule: Rule {
         }
         return result
     }
+    
+    func isSatisfied(score1: Int, score2: Int) -> Bool { true }
 }
 
 class TennisGame1: TennisGame {
@@ -141,7 +151,7 @@ class TennisGame1: TennisGame {
     }
         
     var score: String? {
-        if let rule = rules.first(where: { $0.isSatisfied }) {
+        if let rule = rules.first(where: { $0.isSatisfied(score1: player1.score, score2: player2.score) }) {
             return rule.score
         }
         return ""
