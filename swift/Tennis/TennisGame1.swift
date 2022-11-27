@@ -34,6 +34,11 @@ extension Rule {
     }
 }
 
+extension Player {
+    private var scoreDescriptions: [String] { ["Love", "Fifteen", "Thirty", "Forty", "Advantage"] }
+    var scoreDescription: String { scoreDescriptions[score] }
+}
+
 func scoreDifference(score1: Int, score2: Int) -> Int {
     abs(score1 - score2)
 }
@@ -42,14 +47,16 @@ final class TieRule: Rule {
     func isSatisfied(score1: Int, score2: Int) -> Bool { score1 == score2 }
     
     func scoreDescription(player1: Player, player2: Player) -> String {
-        let result: String
-        switch player1.score {
-        case 0: result = "Love-All"
-        case 1: result = "Fifteen-All"
-        case 2: result = "Thirty-All"
-        default: result = "Deuce"
+        let formattedScore: String = player1.scoreDescription + "-All"
+        return applyTennisTerms(score: formattedScore)
+    }
+    
+    private func applyTennisTerms(score: String) -> String {
+        switch score {
+        case "Forty-All": return "Deuce"
+        case "Advantage-All": return "Deuce"
+        default: return score
         }
-        return result
     }
 }
 
@@ -83,20 +90,7 @@ final class ScoreRule: Rule {
     func isSatisfied(score1: Int, score2: Int) -> Bool { true }
     
     func scoreDescription(player1: Player, player2: Player) -> String {
-        var tempScore = 0
-        var result = ""
-        for i in 1..<3 {
-            if i==1 { tempScore = player1.score }
-            else { result = "\(result)-"; tempScore = player2.score }
-            switch tempScore {
-            case 0: result = "\(result)Love"
-            case 1: result = "\(result)Fifteen"
-            case 2: result = "\(result)Thirty"
-            case 3: result = "\(result)Forty"
-            default: break
-            }
-        }
-        return result
+        player1.scoreDescription + "-" + player2.scoreDescription
     }
 }
 
