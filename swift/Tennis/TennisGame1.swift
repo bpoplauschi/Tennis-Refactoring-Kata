@@ -18,7 +18,7 @@ protocol Rule {
 }
 
 extension Rule {
-    var minScoreToWin: Int { 4 }
+    private var minScoreToWin: Int { 4 }
     private var scoreDifferenceToWin: Int { 2 }
     
     func atLeastOneWinnableScore(score1: Int, score2: Int) -> Bool {
